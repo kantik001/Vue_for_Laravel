@@ -1,53 +1,51 @@
 <template>
-<div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Name</th>
-            <th scope="col">Age</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="person in persons">
-            <th scope="row">{{ person.id }}</th>
-            <td>{{ person.name }}</td>
-            <td>{{ person.age }}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <tr :class="this.$parent.isEdit(person.id) ? '' : 'd-none'">
+        <th scope="row">{{ person.id }}</th>
+        <td><input type="text" v-model="name" class="form-control"></td>
+        <td><input type="number" v-model="age" class="form-control"></td>
+        <td><input type="text" v-model="job" class="form-control"></td>
+        <td><a href="#" @click.prevent="updatePerson(person.id)" class="btn btn-success">Update</a></td>
+    </tr>
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
-    name:"PostComponent",
+    name: "EditComponent",
+
+    props: [
+        'person'
+    ],
 
     data() {
         return {
-            persons: null
+            name: null,
+            age: null,
+            job: null
+
         }
     },
 
     mounted() {
-        this.getPersons()
+
     },
+
 
     methods: {
-      getPersons(){
-          axios.get('/persons')
-              .then(res => {
-                  this.persons = res.data
-              })
-      }
-    },
 
+        updatePerson(id) {
 
-    components: {
+            this.$parent.editPersonId = null
+            axios.patch(`/api/people/${id}`, {name: this.name, age: this.age, job: this.job})
+                .then(res => {
+                    this.$parent.getPeople();
+                })
+        },
+
     }
+
 }
+
 </script>
 
 <style scoped>

@@ -1,53 +1,62 @@
 <template>
-<div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Name</th>
-            <th scope="col">Age</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="person in persons">
-            <th scope="row">{{ person.id }}</th>
-            <td>{{ person.name }}</td>
-            <td>{{ person.age }}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="w-25">
+        <div class="mb-3">
+            <input type="text" class="form-control" v-model="name" id="name" placeholder="name">
+        </div>
+        <div class="mb-3">
+            <input type="number" class="form-control" v-model="age" id="age" placeholder="age">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" v-model="job" id="job" placeholder="job">
+        </div>
+        <div class="mb-3">
+            <input @click.prevent="addPerson" class="btn btn-primary" value="Add">
+        </div>
+        <SinglePostComponent :obj="obj"></SinglePostComponent>
+
+    </div>
 </template>
 
 <script>
-import axios from "axios";
-
+import SinglePostComponent from "./SinglePostComponent.vue";
 export default {
-    name:"PostComponent",
+    name: "CreateComponent",
 
     data() {
-        return {
-            persons: null
+        return{
+            name: null,
+            age: null,
+            job: null,
+            obj: {
+                color: 'yellow',
+                age: 50,
+                obj: false,
+            }
         }
     },
 
     mounted() {
-        this.getPersons()
+        this.$parent.$refs.index.indexLog();
     },
 
     methods: {
-      getPersons(){
-          axios.get('/persons')
-              .then(res => {
-                  this.persons = res.data
-              })
-      }
+        addPerson() {
+            axios.post('/api/people', {name: this.name, age: this.age, job: this.job})
+                .then( res => {
+                    this.name = null
+                    this.age = null
+                    this.job = null
+                    this.$parent.$refs.index.getPeople()
+                })
+        }
     },
 
-
     components: {
+        SinglePostComponent
     }
+
 }
+
 </script>
 
 <style scoped>
