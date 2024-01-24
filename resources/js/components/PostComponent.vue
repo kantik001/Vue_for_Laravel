@@ -9,7 +9,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="person in personsAgeMore">
+        <tr v-for="person in persons">
             <th scope="row">{{ person.id }}</th>
             <td>{{ person.name }}</td>
             <td>{{ person.age }}</td>
@@ -20,43 +20,30 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name:"PostComponent",
 
     data() {
         return {
-            persons: [
-                {
-                id: 1,
-                name: 'Vasya',
-                age: 20,
-                },
-                {
-                    id: 2,
-                    name: 'Leha',
-                    age: 35,
-                },
-                {
-                    id: 3,
-                    name: 'Elena',
-                    age: 25,
-                },
-            ]
-        }
-    },
-    methods: {
-        sayHello() {
-            console.log('Hello')
+            persons: null
         }
     },
 
-    computed: {
-        personsAgeMore() {
-            return this.persons.filter(function (person) {
-                return person.age > 23
-            })
-        }
+    mounted() {
+        this.getPersons()
     },
+
+    methods: {
+      getPersons(){
+          axios.get('/persons')
+              .then(res => {
+                  this.persons = res.data
+              })
+      }
+    },
+
 
     components: {
         TestComponent
